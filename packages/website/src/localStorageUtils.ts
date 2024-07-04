@@ -1,7 +1,7 @@
 import { EXAMPLE_MODE, LS_KEY_HTML, LS_KEY_SELECTOR_STRING } from './constants'
-import debounce from 'lodash.debounce'
+import { debounce } from 'lodash-es'
 
-export function saveContentToLocalStorage(html, selectorString) {
+export function saveContentToLocalStorage(html: string, selectorString: string) {
   if (!EXAMPLE_MODE) {
     if (html) {
       localStorage.setItem(LS_KEY_HTML, html)

@@ -1,16 +1,6 @@
-export * from './CaptureResult'
-export * from './check'
-export * from './constants'
-export * from './procedures'
-export * from './filters'
-export * from './modifiers'
-export * from './interfaces'
-export * from './temme'
-export * from './utils'
+export { parse, SyntaxError, type Ast } from './ast';
+export * from './compiler';
+export * from './resources';
+export * from './core';
 
-import temme from './temme'
-
-declare const TEMME_VERSION: string
-export const version = TEMME_VERSION
-
-export default temme
+export { temme, version } from './temme';

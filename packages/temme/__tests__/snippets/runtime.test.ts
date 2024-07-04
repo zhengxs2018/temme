@@ -1,4 +1,6 @@
-import temme from '../../src'
+import { expect, test } from 'vitest';
+
+import { temme } from '../../src';
 
 const html = `
   <div>
@@ -15,7 +17,7 @@ const html = `
       <p class="color">pink</p>
     </div>
   </div>
-`
+`;
 
 test('basic snippets', () => {
   const selector = `
@@ -26,12 +28,15 @@ test('basic snippets', () => {
 
       .world@world {
         @foo;
-      };`
+      };`;
 
   expect(temme(html, selector)).toEqual({
-    world: [{ name: 'Bob', color: 'blue' }, { name: 'Mary', color: 'pink' }],
-  })
-})
+    world: [
+      { name: 'Bob', color: 'blue' },
+      { name: 'Mary', color: 'pink' },
+    ],
+  });
+});
 
 test('recursive snippets', () => {
   const selector = `
@@ -51,7 +56,7 @@ test('recursive snippets', () => {
 
       .world@world {
         @bar;
-      };`
+      };`;
 
   expect(temme(html, selector)).toEqual({
     hello: [{ bar: 'bar', name: 'Alice', color: 'red' }],
@@ -59,5 +64,5 @@ test('recursive snippets', () => {
       { bar: 'bar', name: 'Bob', color: 'blue' },
       { bar: 'bar', name: 'Mary', color: 'pink' },
     ],
-  })
-})
+  });
+});

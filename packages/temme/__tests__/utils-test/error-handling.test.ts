@@ -1,16 +1,18 @@
-import temme, { msg } from '../../src'
+import { expect, test } from 'vitest';
 
-const html = `<div class="foo">test html</div>`
+import { temme } from '../../src';
+
+const html = `<div class="foo">test html</div>`;
 
 test('invalid filter name', () => {
-  expect(() => temme(html, `div{$text|foo}`)).toThrowError(msg.invalidFilter('foo'))
-})
+  expect(() => temme(html, `div{$text|foo}`)).toThrowError(msg.invalidFilter('foo'));
+});
 
 test('define filter in children selector', () => {
   expect(() => temme(html, `div@ { filter myFilter() { return this } }`)).toThrowError(
     msg.filterDefineNotAtTopLevel('myFilter'),
-  )
-})
+  );
+});
 
 test('define the same filter twice', () => {
   expect(() =>
@@ -19,8 +21,8 @@ test('define the same filter twice', () => {
       `filter myFilter() { return this }
        filter myFilter() { return this }`,
     ),
-  ).toThrowError(msg.filterAlreadyDefined('myFilter'))
-})
+  ).toThrowError(msg.filterAlreadyDefined('myFilter'));
+});
 
 test('define the same modifier twice', () => {
   expect(() => {
@@ -28,9 +30,9 @@ test('define the same modifier twice', () => {
       html,
       `modifier myModifier(result, key, value) { return result.set(key, value) };
        modifier myModifier(result, key, value) { return result.set(key, value) };`,
-    )
-  }).toThrowError(msg.modifierAlreadyDefined('myModifier'))
-})
+    );
+  }).toThrowError(msg.modifierAlreadyDefined('myModifier'));
+});
 
 test('define the same procedure twice', () => {
   expect(() => {
@@ -38,29 +40,29 @@ test('define the same procedure twice', () => {
       html,
       `procedure myProcedure(result, node) { return result };
        procedure myProcedure(result, node) { return result };`,
-    )
-  }).toThrowError(msg.procedureAlreadyDefined('myProcedure'))
-})
+    );
+  }).toThrowError(msg.procedureAlreadyDefined('myProcedure'));
+});
 
 test('parent-ref-selector at top', () => {
-  expect(() => temme(html, `&[attr=$value];`)).toThrowError(msg.parentRefSelectorAtTopLevel())
-})
+  expect(() => temme(html, `&[attr=$value];`)).toThrowError(msg.parentRefSelectorAtTopLevel());
+});
 
 test('other error handling', () => {
   expect(() => {
-    console.log(temme(html, 'div{ foo($bar) }'))
-  }).toThrowError(msg.invalidProcedure('foo'))
+    console.log(temme(html, 'div{ foo($bar) }'));
+  }).toThrowError(msg.invalidProcedure('foo'));
 
   expect(() => temme(html, `.leading-css-part[foo=$bar] .content{$foo}`)).toThrowError(
     msg.hasLeadingAttributeCapture(),
-  )
+  );
 
-  expect(() => temme(html, `div[class^=$value];`)).toThrowError(msg.valueCaptureWithOtherOperator())
+  expect(() => temme(html, `div[class^=$value];`)).toThrowError(msg.valueCaptureWithOtherOperator());
 
   expect(() => temme('<li class="abc"></li>', `li[class=$||trim];`)).toThrowError(
     msg.arrayFilterAppliedToNonArrayValue('trim'),
-  )
-})
+  );
+});
 
 test('define snippet in children selector', () => {
   const selector = `
@@ -68,26 +70,24 @@ div@ {
   @xxx = {
     $foo = 'bar';
   };
-}`
-  expect(() => temme(html, selector)).toThrowError(msg.snippetDefineNotAtTopLevel('xxx'))
-})
+}`;
+  expect(() => temme(html, selector)).toThrowError(msg.snippetDefineNotAtTopLevel('xxx'));
+});
 
 test('use an undefined snippet', () => {
-  expect(() => temme('<div>test-html</div>', `div@ { @mySnippet; }`)).toThrowError(
-    msg.snippetNotDefined('mySnippet'),
-  )
-})
+  expect(() => temme('<div>test-html</div>', `div@ { @mySnippet; }`)).toThrowError(msg.snippetNotDefined('mySnippet'));
+});
 
 test('snippet is already defined', () => {
   const selector = `
 @foo = { div{$text}; };
 @foo = { li@list { &{$text} } };
-`
-  expect(() => temme(html, selector)).toThrowError(msg.snippetAlreadyDefined('foo'))
-})
+`;
+  expect(() => temme(html, selector)).toThrowError(msg.snippetAlreadyDefined('foo'));
+});
 
 test('circular snippet expansion detection', () => {
-  const html = '<div>test html</div>'
+  const html = '<div>test html</div>';
   const selector = `
     @foo = {
       @bar;
@@ -102,14 +102,12 @@ test('circular snippet expansion detection', () => {
       $inBuzz = true;
     };
     @foo;
-  `
-  expect(() => temme(html, selector)).toThrowError(
-    msg.circularSnippetExpansion(['foo', 'bar', 'buzz', 'foo']),
-  )
-})
+  `;
+  expect(() => temme(html, selector)).toThrowError(msg.circularSnippetExpansion(['foo', 'bar', 'buzz', 'foo']));
+});
 
 test('circular snippet expansion detection', () => {
-  const html = '<div>test html</div>'
+  const html = '<div>test html</div>';
   const selector = `
     @foo = {
       @bar;
@@ -128,6 +126,6 @@ test('circular snippet expansion detection', () => {
       };
     };
     @foo;
-  `
-  expect(() => temme(html, selector)).not.toThrow()
-})
+  `;
+  expect(() => temme(html, selector)).not.toThrow();
+});

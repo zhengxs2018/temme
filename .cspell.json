@@ -1,0 +1,24 @@
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  "version": "0.2",
+  "language": "en",
+  "languageId": "typescript,javascript",
+  "dictionaries": [
+    "typescript",
+    "npm",
+    "node"
+  ],
+  "useGitignore": true,
+  "ignorePaths": [],
+  "words": [
+    "feichao",
+    "lcov",
+    "pegjs",
+    "shif",
+    "shinima",
+    "temme",
+    "trivago"
+  ],
+  "allowCompoundWords": true,
+  "overrides": []
+}

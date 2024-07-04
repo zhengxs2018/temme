@@ -8,25 +8,18 @@
   "publisher": "shinima",
   "repository": "https://github.com/shinima/temme.git",
   "main": "dist/index.js",
-  "scripts": {
-    "start": "npm-run-all --parallel start:*",
-    "start:grammar": "supervisor --no-restart-on exit --watch temme.tmLanguage.yaml -e yaml -- compile.js",
-    "start:ext": "webpack --watch --mode=development",
-    "build": "npm-run-all --parallel build:*",
-    "build:grammar": "node compile.js",
-    "build:ext": "webpack --mode=production"
+  "scripts": {},
+  "vsce": {
+    "dependencies": true
   },
   "engines": {
-    "vscode": "^1.22.0"
+    "vscode": "^1.77.0"
   },
   "categories": [
     "Programming Languages"
   ],
   "activationEvents": [
-    "onLanguage:temme",
-    "onCommand:temme.runSelector",
-    "onCommand:temme.startWatch",
-    "onCommand:temme.stop"
+    "onStartupFinished"
   ],
   "contributes": {
     "languages": [
@@ -67,22 +60,12 @@
       }
     ]
   },
-  "devDependencies": {
-    "@types/node": "^13.1.4",
-    "js-yaml": "^3.13.1",
-    "mkdirp": "^1.0.4",
-    "npm-run-all": "^4.1.5",
-    "prettier": "^2.0.2",
-    "supervisor": "^0.12.0",
-    "ts-loader": "^6.0.4",
-    "typescript": "^3.5.2",
-    "vscode": "1.1.36",
-    "webpack": "^4.35.0",
-    "webpack-cli": "^3.3.5",
-    "webpack-dev-server": "^3.7.2"
-  },
   "dependencies": {
-    "@types/node-fetch": "^2.3.7",
-    "node-fetch": "^2.6.0"
+    "cheerio": "^1.0.0-rc.12",
+    "temme": "workspace:^"
+  },
+  "devDependencies": {
+    "js-yaml": "^4.1.0",
+    "vscode": "1.1.36"
   }
 }

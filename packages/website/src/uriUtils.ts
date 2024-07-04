@@ -1,11 +1,11 @@
 import LZString from 'lz-string'
 import { EXAMPLE_MODE } from './constants'
 
-export function encodeContent(html, selectorString) {
+export function encodeContent(html: string, selectorString: string) {
   return LZString.compressToEncodedURIComponent(JSON.stringify({ html, selectorString }))
 }
 
-export function saveContentToUri(html, selectorString) {
+export function saveContentToUri(html: string, selectorString: string) {
   if (!EXAMPLE_MODE) {
     location.replace('#' + encodeContent(html, selectorString))
   }

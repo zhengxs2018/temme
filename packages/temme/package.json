@@ -1,59 +1,35 @@
 {
   "name": "temme",
-  "version": "0.8.3",
+  "private": true,
+  "version": "0.1.0",
   "description": "Concise selector to extract JSON from HTML.",
-  "main": "dist/temme.js",
-  "module": "dist/temme.mjs",
-  "unpkg": "dist/temme.umd.js",
-  "typings": "dist/index.d.ts",
   "repository": "https://github.com/shinima/temme.git",
   "homepage": "https://temme.js.org",
   "author": "Shi Feichao <842351815@qq.com>",
   "license": "MIT",
-  "bin": "./bin/temme.js",
-  "engines": {
-    "node": ">= 6"
-  },
+  "type": "module",
+  "main": "dist/index.ts",
+  "types": "./types/index.d.ts",
   "files": [
-    "bin",
     "dist",
-    "readme.md"
+    "types"
   ],
+  "sideEffect": false,
   "scripts": {
-    "test-only": "cross-env NODE_ENV=development jest --coverage",
-    "test": "npm run test-only && cat ./coverage/lcov.info | coveralls",
-    "start": "rollup --config rollup.config.js --watch",
-    "build": "npm-run-all --serial build:*",
-    "build:rollup": "rollup --config rollup.config.js",
-    "build:webpack": "webpack --mode production",
-    "prepublish": "rimraf dist && npm run build"
+    "build": "vite build",
+    "watch": "vite build --mode=development --watch",
+    "compile": "peggy -c peggy.config.cjs --watch"
   },
   "dependencies": {
-    "@types/cheerio": "^0.22.11",
-    "@types/invariant": "^2.2.30",
-    "cheerio": "^1.0.0-rc.3",
-    "commander": "^4.0.1",
-    "invariant": "^2.2.4"
+    "cheerio": "^1.0.0-rc.12",
+    "lodash-es": "^4.17.21"
   },
   "devDependencies": {
-    "@types/jest": "^25.2.1",
-    "@types/pegjs": "^0.10.1",
-    "coveralls": "^3.0.4",
-    "cross-env": "^7.0.2",
-    "jest": "^25.2.7",
-    "npm-run-all": "^4.1.5",
-    "pegjs": "^0.10.0",
-    "pegjs-jest": "^0.0.2",
-    "pegjs-loader": "^0.5.4",
-    "rimraf": "^3.0.0",
-    "rollup": "^2.3.3",
-    "rollup-plugin-pegjs": "^2.1.3",
-    "rollup-plugin-replace": "^2.2.0",
-    "rollup-plugin-typescript2": "^0.27.0",
-    "ts-jest": "^25.3.1",
-    "ts-loader": "^6.0.4",
-    "typescript": "^3.5.2",
-    "webpack": "^4.35.0",
-    "webpack-cli": "^3.3.5"
+    "peggy": "^4.0.3",
+    "typescript": "^5.5.3",
+    "vite": "^5.3.2",
+    "vite-plugin-checker": "^0.7.0",
+    "vite-plugin-dts": "^3.9.1",
+    "vite-plugin-externalize-deps": "^0.8.0"
   }
 }

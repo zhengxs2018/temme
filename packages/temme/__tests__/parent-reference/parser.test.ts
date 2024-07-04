@@ -1,10 +1,13 @@
-import { DEFAULT_CAPTURE_KEY, DEFAULT_PROCEDURE_NAME, temmeParser, TemmeSelector } from '../../src'
+import { expect, test } from 'vitest';
+
+import { type Ast, DEFAULT_CAPTURE_KEY, DEFAULT_PROCEDURE_NAME } from '../../src/ast';
+import { parse } from 'path';
 
 test('test parent-reference', () => {
-  const expected: TemmeSelector[] = [
+  const expected: Ast.Selector[] = [
     {
       type: 'normal-selector',
-      arrayCapture: { filterList: [], name: DEFAULT_CAPTURE_KEY, modifier: null },
+      arrayCapture: { filters: [], name: DEFAULT_CAPTURE_KEY, modifier: null },
       sections: [{ combinator: ' ', element: 'div', qualifiers: [] }],
       children: [
         {
@@ -12,13 +15,13 @@ test('test parent-reference', () => {
           section: { combinator: ' ', element: '*', qualifiers: [] },
           procedure: {
             name: DEFAULT_PROCEDURE_NAME,
-            args: [{ filterList: [], name: 'value', modifier: null }],
+            args: [{ filters: [], name: 'value', modifier: null }],
           },
         },
       ],
       procedure: null,
     },
-  ]
+  ];
 
-  expect(temmeParser.parse(`div@ { &{$value} };`)).toEqual(expected)
-})
+  expect(parse(`div@ { &{$value} };`)).toEqual(expected);
+});

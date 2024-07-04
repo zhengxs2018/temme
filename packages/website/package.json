@@ -1,22 +1,25 @@
 {
-  "private": true,
   "name": "website",
+  "private": true,
   "version": "0.8.3",
+  "type": "module",
   "scripts": {
-    "start": "webpack-dev-server --mode development",
-    "build": "webpack --mode production && copyfiles public/**/* dist --up 1"
-  },
-  "devDependencies": {
-    "copyfiles": "^2.1.0",
-    "html-webpack-plugin": "^4.0.4",
-    "webpack": "^4.26.1",
-    "webpack-cli": "^3.1.2",
-    "webpack-dev-server": "^3.1.10"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "lodash.debounce": "^4.0.8",
-    "lz-string": "^1.4.4",
+    "ace-builds": "^1.35.2",
+    "cheerio": "^1.0.0-rc.12",
+    "lodash-es": "^4.17.21",
+    "lz-string": "^1.5.0",
+    "normalize.css": "^8.0.1",
     "pretty": "^2.0.0",
-    "temme": "^0.8.3"
+    "temme": "workspace:^"
+  },
+  "devDependencies": {
+    "@types/pretty": "^2.0.3",
+    "typescript": "^5.5.3",
+    "vite": "^5.3.2"
   }
 }

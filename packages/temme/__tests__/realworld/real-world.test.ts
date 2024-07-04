@@ -1,17 +1,20 @@
-import temme, { temmeParser, TemmeSelector } from '../../src/index'
-import * as path from 'path'
-import * as fs from 'fs'
+import fs from 'node:fs';
+import path from 'node:path';
+
+import { expect, test } from 'vitest';
+
+import { compile, temme } from '../../src/index';
 
 const stackOverflowHtml = fs.readFileSync(
   path.resolve(__dirname, './html/question-page-of-stackoverflow.html'),
   'utf8',
-)
-const maigooHtml = fs.readFileSync(path.resolve(__dirname, './html/maigoo-brand-page.html'), 'utf8')
+);
+const maigooHtml = fs.readFileSync(path.resolve(__dirname, './html/maigoo-brand-page.html'), 'utf8');
 
 test('text matching', () => {
   const selector = `
     .article_head h1{find($name, '-')};
-    .author{find('阅读：', $count|Number, '次')};`
+    .author{find('阅读：', $count|Number, '次')};`;
 
   // language=TEXT
   const html = `
@@ -20,30 +23,30 @@ test('text matching', () => {
       <h1>张茵-东莞玖龙纸业有限公司董事长介绍</h1>
       <div class="author">阅读：13015次</div>
     </div>
-  </div>`
+  </div>`;
   expect(temme(html, selector)).toMatchObject({
     name: '张茵',
     count: 13015,
-  })
-})
+  });
+});
 
 test('basic value capture', () => {
-  const selector = `#question-header .question-hyperlink[href=$url]{$title}`
+  const selector = `#question-header .question-hyperlink[href=$url]{$title}`;
 
   expect(temme(stackOverflowHtml, selector)).toEqual({
     url: '/questions/291978/short-description-of-the-scoping-rules',
     title: 'Short Description of the Scoping Rules?',
-  })
-})
+  });
+});
 
 test('array capture', () => {
   const selector = `.answer@answers {
     .votecell .vote-count-post{$upvote};
     .user-info .user-details>a{$userName};
-  }`
-  const parseResult: TemmeSelector[] = temmeParser.parse(selector)
+  }`;
+  const tokens = compile(selector);
 
-  expect(temme(stackOverflowHtml, parseResult)).toEqual({
+  expect(temme(stackOverflowHtml, tokens)).toEqual({
     answers: [
       { upvote: '259', userName: 'Community' },
       { upvote: '111', userName: 'Brian' },
@@ -53,8 +56,8 @@ test('array capture', () => {
       { upvote: '6', userName: 'Community' },
       { upvote: '5', userName: 'bobince' },
     ],
-  })
-})
+  });
+});
 
 test('complex example: recursive array capture, default capture', () => {
   const selector = `.answer@ {
@@ -67,7 +70,7 @@ test('complex example: recursive array capture, default capture', () => {
       .comment-user[href=$userUrl]{$userName};
       .comment-data span[title=$data];
     };
-  }`
+  }`;
 
   expect(temme(stackOverflowHtml, selector)).toEqual([
     {
@@ -110,9 +113,7 @@ test('complex example: recursive array capture, default capture', () => {
     { comments: [], upvote: '58', userName: 'Antti Haapala' },
     { comments: [], upvote: '18', userName: 'Jeremy Cantrell' },
     {
-      comments: [
-        { content: 'This is gr', score: 3, userName: 'kiril', userUrl: '/users/1919237/kiril' },
-      ],
+      comments: [{ content: 'This is gr', score: 3, userName: 'kiril', userUrl: '/users/1919237/kiril' }],
       upvote: '13',
       userName: 'brianray',
     },
@@ -130,8 +131,8 @@ test('complex example: recursive array capture, default capture', () => {
       userName: 'Community',
     },
     { comments: [], upvote: '5', userName: 'bobince' },
-  ])
-})
+  ]);
+});
 
 test('complex case: multiple parent-refs', () => {
   const selector = `.brandinfo .info >li@|pack{
@@ -141,13 +142,13 @@ test('complex case: multiple parent-refs', () => {
       &{ find('品牌广告词：', $adText|trim) };
       &{ html($presidentUrl|extractPresidentUrl) };
       script[language]{ html($officialWebsite|extractUrl) };
-    }`
+    }`;
 
   const filters = {
     extractUrl(this: string) {
-      const reg = /">(.*)<\/a>/
-      const result = this.match(reg)
-      return result && result[1]
+      const reg = /">(.*)<\/a>/;
+      const result = this.match(reg);
+      return result && result[1];
     },
 
     extractPresidentUrl(this: string) {
@@ -157,11 +158,11 @@ test('complex case: multiple parent-refs', () => {
         this.indexOf('董事长') !== -1 ||
         this.indexOf('CEO') !== -1
       ) {
-        const [_, presidentUrl]: string[] = this.match(/href="(.*)"/) || []
-        return presidentUrl
+        const [_, presidentUrl]: string[] = this.match(/href="(.*)"/) || [];
+        return presidentUrl;
       }
     },
-  }
+  };
 
   expect(temme(maigooHtml, selector, filters)).toEqual({
     phone: ['400-100-5678'],
@@ -170,5 +171,5 @@ test('complex case: multiple parent-refs', () => {
     origination: '北京市',
     presidentUrl: 'http://www.maigoo.com/mingren/848.html',
     adText: '小米，为发烧而生',
-  })
-})
+  });
+});

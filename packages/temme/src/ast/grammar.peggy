@@ -196,8 +196,8 @@ Combinator = [ >+~]
 AttributeOperator = '=' / '~=' / '|=' / '*=' / '^=' / '$='
 
 ArrayCapture
-  = name:ArrayCaptureName filterList:Filter* modifier:Modifier? {
-    return { name, filterList, modifier }
+  = name:ArrayCaptureName filters:Filter* modifier:Modifier? {
+    return { name, filters, modifier }
   }
 
 ArrayCaptureName
@@ -214,10 +214,10 @@ ChildrenSelectors
   }
 
 Filter
-  = '||' name:IdentifierName args:LiteralArgs? {
+  = __? '||' __ name:IdentifierName args:LiteralArgs? {
     return { isArrayFilter: true, name, args: args || [] }
   }
-  / '|' name:IdentifierName args:LiteralArgs? {
+  / __? '|' __ name:IdentifierName args:LiteralArgs? {
     return { isArrayFilter: false, name, args: args || [] }
   }
 
@@ -365,11 +365,11 @@ ProcedureDetail
 ProcedureArg = Literal / ValueCapture
 
 ValueCapture
-  = '$' name:IdentifierName filterList:Filter* modifier:Modifier? {
-    return { name, filterList, modifier }
+  = '$' name:IdentifierName filters:Filter* modifier:Modifier? {
+    return { name, filters, modifier }
   }
-  / '$' filterList:Filter* modifier:Modifier? {
-    return { name: DEFAULT_CAPTURE_KEY, filterList, modifier }
+  / '$' filters:Filter* modifier:Modifier? {
+    return { name: DEFAULT_CAPTURE_KEY, filters, modifier }
   }
 
 CSSIdentifierName = $('-'? CSSIdentifierNameStart CSSIdentifierNameChar*)
@@ -635,7 +635,6 @@ Pc = [\u005F\u203F-\u2040\u2054\uFE33-\uFE34\uFE4D-\uFE4F\uFF3F]
 
 // Separator, Space
 Zs = [\u0020\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]
-
 
 FalseToken      = "false"      !IdentifierPart
 NullToken       = "null"       !IdentifierPart

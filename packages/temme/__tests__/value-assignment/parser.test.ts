@@ -1,16 +1,18 @@
-import { temmeParser, TemmeSelector } from '../../src'
+import { expect, test } from 'vitest';
+
+import { parse, type Ast } from '../../src'
 
 test('value-assignment at top-level', () => {
-  const expected: TemmeSelector[] = [
+  const expected: Ast.Selector[] = [
     {
       type: 'assignment',
-      capture: { name: 'a', filterList: [], modifier: null },
+      capture: { name: 'a', filters: [], modifier: null },
       value: '123',
     },
   ]
-  expect(temmeParser.parse(`$a="123";`)).toEqual(expected)
-  expect(temmeParser.parse(`$a = '123';`)).toEqual(expected)
-  expect(temmeParser.parse(`$a   \t\n= '123';`)).toEqual(expected)
+  expect(parse(`$a="123";`)).toEqual(expected)
+  expect(parse(`$a = '123';`)).toEqual(expected)
+  expect(parse(`$a   \t\n= '123';`)).toEqual(expected)
 })
 
 test('value-assignment in children basic-selectors', () => {
@@ -19,10 +21,10 @@ test('value-assignment in children basic-selectors', () => {
         $a = null;
       };
     `
-  const expected: TemmeSelector[] = [
+  const expected: Ast.Selector[] = [
     {
       type: 'normal-selector',
-      arrayCapture: { name: 'list', filterList: [], modifier: null },
+      arrayCapture: { name: 'list', filters: [], modifier: null },
       procedure: null,
       sections: [
         {
@@ -34,18 +36,18 @@ test('value-assignment in children basic-selectors', () => {
       children: [
         {
           type: 'assignment',
-          capture: { name: 'a', filterList: [], modifier: null },
+          capture: { name: 'a', filters: [], modifier: null },
           value: null,
         },
       ],
     },
   ]
-  expect(temmeParser.parse(selector)).toEqual(expected)
+  expect(parse(selector)).toEqual(expected)
 })
 
 test('value-assignment in content', () => {
   const selector = 'div{ assign($foo, true) }'
-  const expected: TemmeSelector[] = [
+  const expected: Ast.Selector[] = [
     {
       type: 'normal-selector',
       arrayCapture: null,
@@ -58,10 +60,10 @@ test('value-assignment in content', () => {
       ],
       procedure: {
         name: 'assign',
-        args: [{ name: 'foo', filterList: [], modifier: null }, true],
+        args: [{ name: 'foo', filters: [], modifier: null }, true],
       },
       children: [],
     },
   ]
-  expect(temmeParser.parse(selector)).toEqual(expected)
+  expect(parse(selector)).toEqual(expected)
 })

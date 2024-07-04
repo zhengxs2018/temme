@@ -1,11 +1,13 @@
+import { expect, test } from 'vitest';
+
 import { CaptureResult, defaultFilterDict, defaultModifierDict, Modifier, msg } from '../../src'
 
 function add(result: CaptureResult, key: string, value: any) {
-  result.add({ name: key, filterList: [], modifier: null }, value)
+  result.add({ name: key, filters: [], modifier: null }, value)
 }
 
 function forceAdd(result: CaptureResult, key: string, value: any) {
-  result.forceAdd({ name: key, filterList: [], modifier: null }, value)
+  result.force_add({ name: key, filters: [], modifier: null }, value)
 }
 
 function makeCaptureResult() {
@@ -41,12 +43,12 @@ test('force add', () => {
   expect(r.getResult()).toEqual({ k2: null })
 })
 
-test('applyFilterList from defaultFilterDict', () => {
+test('applyfilters from defaultFilterDict', () => {
   const r = makeCaptureResult()
   r.add(
     {
       name: 'k1',
-      filterList: [{ isArrayFilter: false, name: 'compact', args: [] }],
+      filters: [{ isArrayFilter: false, name: 'compact', args: [] }],
       modifier: null,
     },
     [0, 1, null, true, false],
@@ -54,7 +56,7 @@ test('applyFilterList from defaultFilterDict', () => {
   expect(r.getResult()).toEqual({ k1: [1, true] })
 
   r.add(
-    { name: 'k2', filterList: [{ isArrayFilter: false, name: 'pack', args: [] }], modifier: null },
+    { name: 'k2', filters: [{ isArrayFilter: false, name: 'pack', args: [] }], modifier: null },
     [{ x: 1 }, { y: 2 }, { z: 3 }],
   )
   expect(r.getResult()).toEqual({
@@ -65,7 +67,7 @@ test('applyFilterList from defaultFilterDict', () => {
   r.add(
     {
       name: 'k3',
-      filterList: [{ isArrayFilter: false, name: 'Number', args: [] }],
+      filters: [{ isArrayFilter: false, name: 'Number', args: [] }],
       modifier: null,
     },
     '1234',
@@ -77,12 +79,12 @@ test('applyFilterList from defaultFilterDict', () => {
   })
 })
 
-test('applyFilterList from prototype chain', () => {
+test('applyfilters from prototype chain', () => {
   const r = makeCaptureResult()
   r.add(
     {
       name: 'k1',
-      filterList: [{ isArrayFilter: false, name: 'toUpperCase', args: [] }],
+      filters: [{ isArrayFilter: false, name: 'toUpperCase', args: [] }],
       modifier: null,
     },
     'lowercase',
@@ -94,7 +96,7 @@ test('applyFilterList from prototype chain', () => {
   r.add(
     {
       name: 'k2',
-      filterList: [{ isArrayFilter: false, name: 'substring', args: [0, 4] }],
+      filters: [{ isArrayFilter: false, name: 'substring', args: [0, 4] }],
       modifier: null,
     },
     'longlongstring',
@@ -110,7 +112,7 @@ test('apply multiple filters', () => {
   r.add(
     {
       name: 'k1',
-      filterList: [
+      filters: [
         { isArrayFilter: false, name: 'substring', args: [1, 3] },
         { isArrayFilter: false, name: 'Number', args: [] },
       ],
@@ -125,7 +127,7 @@ test('apply multiple filters', () => {
   r.add(
     {
       name: 'k2',
-      filterList: [
+      filters: [
         { isArrayFilter: false, name: 'compact', args: [] }, // [ 'a', 'b', 'c', 'd' ]
         { isArrayFilter: false, name: 'join', args: [','] }, // 'a,b,c,d'
         { isArrayFilter: false, name: 'substring', args: [0, 3] }, // 'a,b'
@@ -150,7 +152,7 @@ test('invalid filter', () => {
     r.add(
       {
         name: 'key',
-        filterList: [{ isArrayFilter: false, name: 'foo', args: [] }],
+        filters: [{ isArrayFilter: false, name: 'foo', args: [] }],
         modifier: null,
       },
       'value',
@@ -162,6 +164,6 @@ test('invalid modifier', () => {
   const r = makeCaptureResult()
   const foo: Modifier = { name: 'foo', args: [] }
   expect(() => {
-    r.add({ name: 'key', filterList: [], modifier: foo }, 'value')
+    r.add({ name: 'key', filters: [], modifier: foo }, 'value')
   }).toThrow(msg.invalidModifier(foo.name))
 })

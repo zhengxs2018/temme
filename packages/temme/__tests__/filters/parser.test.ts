@@ -1,19 +1,18 @@
-import { Capture, NormalSelector, temmeParser, TemmeSelector } from '../../src'
+import { expect, test } from 'vitest';
 
-function extractFilterList(selectors: TemmeSelector[]) {
-  return ((selectors[0] as NormalSelector).procedure.args[0] as Capture).filterList
+import { type Ast, parse } from '../../src';
+
+function extractfilters(selectors: Ast.Selector[]) {
+  const selector = selectors[0] as Ast.NormalSelector;
+  return (selector.procedure?.args?.[0] as Ast.Capture).filters;
 }
 
 test('parse filters', () => {
-  expect(extractFilterList(temmeParser.parse('html{$h|f}'))).toEqual([
-    { isArrayFilter: false, name: 'f', args: [] },
-  ])
+  expect(extractfilters(parse('html{$h|f}'))).toEqual([{ isArrayFilter: false, name: 'f', args: [] }]);
 
-  expect(
-    extractFilterList(temmeParser.parse(`html{$h|f(1,null,'3')|g()|h(false,true,'234')}`)),
-  ).toEqual([
+  expect(extractfilters(parse(`html{$h|f(1,null,'3')|g()|h(false,true,'234')}`))).toEqual([
     { isArrayFilter: false, name: 'f', args: [1, null, '3'] },
     { isArrayFilter: false, name: 'g', args: [] },
     { isArrayFilter: false, name: 'h', args: [false, true, '234'] },
-  ])
-})
+  ]);
+});

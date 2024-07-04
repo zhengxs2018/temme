@@ -1,46 +1,52 @@
+import ace from 'ace-builds'
+
 import examples from './examples'
 import { encodeContent } from './uriUtils'
 
-function gotoExample(name) {
-  window.location = `?example=${name}`
+function gotoExample(name: string) {
+  window.location.href = `?example=${name}`
 }
 
-function enterExampleMode(currentExampleName, htmlEditor, selectorEditor) {
-  const exitExampleModeLink = document.querySelector('#exit-example-mode')
+function enterExampleMode(
+  currentExampleName: string | null,
+  htmlEditor: ace.Ace.Editor,
+  selectorEditor: ace.Ace.Editor,
+) {
+  const exitExampleModeLink = document.querySelector('#exit-example-mode') as HTMLButtonElement
   const url = new URL(document.URL)
   url.search = ''
   exitExampleModeLink.onclick = () => location.assign(url)
 
-  const exampleSelectPart = document.querySelector('#example-select-part')
+  const exampleSelectPart = document.querySelector('#example-select-part') as HTMLDivElement
   exampleSelectPart.style.display = 'block'
 
-  const exampleSelect = document.querySelector('#example-select')
+  const exampleSelect = document.querySelector('#example-select') as HTMLSelectElement
   for (const example of examples) {
     const option = document.createElement('option')
     option.value = example.name
     option.textContent = example.name
     exampleSelect.appendChild(option)
   }
-  exampleSelect.value = currentExampleName
+  exampleSelect.value = currentExampleName || ''
   exampleSelect.onchange = () => gotoExample(exampleSelect.value)
 
-  const prevButton = document.querySelector('#prev-example-button')
+  const prevButton = document.querySelector('#prev-example-button') as HTMLButtonElement
   prevButton.onclick = () => {
-    const index = examples.findIndex(example => example.name === currentExampleName)
+    const index = examples.findIndex((example) => example.name === currentExampleName)
     if (index > 0) {
       gotoExample(examples[index - 1].name)
     }
   }
 
-  const nextButton = document.querySelector('#next-example-button')
+  const nextButton = document.querySelector('#next-example-button') as HTMLButtonElement
   nextButton.onclick = () => {
-    const index = examples.findIndex(example => example.name === currentExampleName)
+    const index = examples.findIndex((example) => example.name === currentExampleName)
     if (index < examples.length - 1) {
       gotoExample(examples[index + 1].name)
     }
   }
 
-  const openButton = document.querySelector('#open-example-button')
+  const openButton = document.querySelector('#open-example-button') as HTMLButtonElement
   openButton.onclick = () => {
     const url = new URL(document.URL)
     url.search = ''
@@ -49,11 +55,15 @@ function enterExampleMode(currentExampleName, htmlEditor, selectorEditor) {
   }
 }
 
-export default async function loadExample(exampleName, htmlEditor, selectorEditor) {
+export default async function loadExample(
+  exampleName: string | null,
+  htmlEditor: ace.Ace.Editor,
+  selectorEditor: ace.Ace.Editor,
+) {
   enterExampleMode(exampleName, htmlEditor, selectorEditor)
   selectorEditor.setValue('// Loading examples...')
   htmlEditor.setValue('Loading examples...')
-  const example = examples.find(example => example.name === exampleName)
+  const example = examples.find((example) => example.name === exampleName)
   if (!example) {
     alert('Invalid example name')
     return

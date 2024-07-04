@@ -1,4 +1,7 @@
-import temme, { cheerio, defineFilter } from '../../src'
+import { expect, test } from 'vitest';
+import cheerio from 'cheerio'
+
+import { temme, defineFilter } from '../../src'
 
 test('prototype filter: String#split', () => {
   const html = `<p>A B C D</p>`
